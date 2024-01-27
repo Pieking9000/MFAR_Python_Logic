@@ -85,10 +85,6 @@ def main():
         Location(2, 9, 5, [S2, 0]),
         Location(2, 13, 6, [])
         ]
-    #Location.getUniquieRequirements
-    #If location.sector != 0
-    #Append anySector to req
-    #check location.sector and .append sector baseline
     remainingLocations = []
     spoilerLogLocations = []
     #test()
