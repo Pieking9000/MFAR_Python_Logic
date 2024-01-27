@@ -185,6 +185,24 @@ def test():
     print(canRandoLoc(testLoc))
 
 class Location:
+    '''
+        Nested item requirements are optional
+        i.e. To get to any sector, you need either
+        SpeedBooster or MorphBall, so to express
+        that in the itemRequirements field, your final
+        list of itemRequirements would be [[0,5]].
+        [] is your total list, and [0,5] (Speed Booster
+        or Morph ball), is your only requirement
+        Another example, to get to the item at coord (13, 5)
+        (The Hornoad Hole? I think?) your item requirements would
+        look like this: [[0,5], [5, [1, 7, 8, 15]], 0].
+        To reach this item, you only need 3 items, your first
+        is either morph ball or speed booster to get to the sector
+        elevator, the second is either Speed booster or any missile
+        to get past the missile barrier before the first atmo room
+        (and the atmo room itself), and the third item is morph ball
+        and only morph ball
+    '''
     def __init__(self, sector, X, Y, itemRequirements, itemAtLocation = None):
         self.sector = sector
         self.X = X
