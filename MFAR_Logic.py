@@ -1,7 +1,7 @@
-import random
+import random, pdb
 
 def main():
-    global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations
+    global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations, blueDoors, greenDoors, yellowDoors, redDoors, anySector, anyMissile, S1, S2, locBoolTable
     itemIndex = {
         0:"MorphBall",
         1:"Missile",
@@ -28,15 +28,18 @@ def main():
         26:"AnyBomb",
         99:"Undefined"
         }
+    locBoolTable = []
     #Requirement Baselines
-    blueDoors = [[0, 5]]
-    greenDoors = [[0, 5], 5, [3, 10], [3, 4]]
+    anyMissile = [1, 7, 8, 15]
+    anyBomb = [3, 10]
+    anySector = [0, 5]
+    canFreeze = [8, 17]
+    blueDoors = [anySector]
+    greenDoors = [anySector, 5, anyBomb, [3, 4]]
     yellowDoors = [[0, 5], 5, [3, 10]]
     redDoors = [[0, 5], 13, 5, [3, 10]]
-    anySector = [[0, 5]]
-    S1 = [anySector, [[1, 7, 8, 15], 5]]
+    S1 = [anySector, [anyMissile, 5]]
     S2 = [anySector, [3, 10]]
-    anyMissile = [1, 7, 8, 15]
     
     startingItems = [0,1,5,7,8,15]
     remainingItems = [2,3,4,6,9,10,11,12,13,14,16,17]
@@ -82,15 +85,15 @@ def main():
         Location(2, 4, 4, [S2, 0]),
         Location(2, 12, 4, [S2, 0]),
         Location(2, 0, 5, [S2, anyMissile]),
-        Location(2, 9, 5, [S2, 0]),
-        Location(2, 13, 6, [])
+        Location(2, 9, 5, [S2, 0])
+        #Location(2, 13, 6, [])
         ]
     remainingLocations = []
     spoilerLogLocations = []
-    #test()
+    test()
     #randomizeMainDeck()
     #printSpoilerLog()
-    print(getItemOrder())
+    #print(getItemOrder())
 
 
 def randomizeMainDeck():
@@ -105,7 +108,6 @@ def randomizeMainDeck():
         
     playerItems.append(startingItem)
     remainingItems.remove(startingItem)
-
     
     #print(itemIndex[startingItem])
     while len(remainingItems) > 0:
@@ -117,32 +119,7 @@ def randomizeMainDeck():
             location.set_item(tempItem)
             spoilerLogLocations.append(location)
             remainingItems.remove(tempItem)            
-            allLocations.remove(location)
-
-
-def canRandoLoc(location) -> bool:
-    global playerItems
-    requirementList = location.itemRequirements
-    playerItemsList = playerItems
-    canPlayerGetHere = True
-    while len(requirementList) > 0:
-        for item in playerItemsList:
-            for req in requirementList:
-                if type(req) is list:
-                    for elem in req:
-                        if item == elem:
-                            requirementList.remove(req)
-                else:
-                    if item == req:
-                        requirementList.remove(req)
-        if len(playerItemsList) == 0:
-            canPlayerGetHere = False
-            break
-        else:
-            print(len(playerItemsList))
-            playerItemsList.remove(item)
-    return canPlayerGetHere
-                    
+            allLocations.remove(location)                    
 
 def printSpoilerLog():
     global spoilerLogLocations, itemIndex
@@ -150,19 +127,15 @@ def printSpoilerLog():
         loc = spoilerLogLocations[i]
         print("Item: " + itemIndex[loc.get_item()] + " at S" + str(loc.sector) + "-" + str(loc.X) + "-" + str(loc.Y))
 
-def getAvailableLocations(newItem) -> list:
+def getAvailableLocations() -> list:
     global allLocations
-    availableLocations = []
+    availLoc = []
     for loc in allLocations:
-        for req in loc.itemRequirements:
-            if type(req) is list:
-                for elem in req:
-                    if newItem == elem:
-                        availableLocations.append(loc)
-            else:
-                if newItem == req:
-                    availableLocations.append(loc)
-    return availableLocations
+        #print(loc)
+        if canRandoLoc(loc) == True:
+            availLoc.append(loc)
+    return availLoc
+            
 
 def getItemOrder() -> list:
     global startingItems, remainingItems
@@ -174,15 +147,57 @@ def getItemOrder() -> list:
     
     while len(remainingItems) > 0:
         nextItem = remainingItems[random.randint(0, len(remainingItems) - 1)]
+        print(remainingItems)
         listOfItems.append(nextItem)
         remainingItems.remove(nextItem)
     return listOfItems
 
 def test():
-    global playerItems
-    playerItems = [7, 20]
-    testLoc = Location(0, 24, 8, [[1, 7, 8, 15], 0])
+    global playerItems, blueDoors, greenDoors, yellowDoors, redDoors, S1, S2, anySector, anyMissile
+    playerItems = [0, 5]
+    testLoc = Location(1, 13, 2, [S1, 0])
     print(canRandoLoc(testLoc))
+    #for loc in getAvailableLocations():
+    #   print(loc)
+    #print(processList(testLoc.itemRequirements))
+
+def processList(listToProcess):
+    global playerItems, locBoolTable
+    for item in listToProcess:
+        if type(item) is list:
+            listToProcess[listToProcess.index(item)] = meetsRequirement(item)
+            return listToProcess
+        else:
+            print(listToProcess)
+            break
+
+def meetsRequirement(listToCheck):
+    global playerItems
+    for item in listToCheck:
+        if item in playerItems:
+            return True
+    return False
+   
+def canRandoLoc(location) -> bool:
+    global locBoolTable
+    reqList = []
+    '''for item in location.itemRequirements:
+        if type(item) is list:
+            #print(item)
+            #print(processList(item))
+            print(processList(item))
+            
+        else:
+            reqList.append(item in playerItems)
+    '''
+    locBoolTable = location.itemRequirements
+    processList(location.itemRequirements)
+    print(locBoolTable)
+    
+    for elem in reqList:
+        if elem == False:
+            return False
+    return True
 
 class Location:
     '''
