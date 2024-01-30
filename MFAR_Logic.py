@@ -215,6 +215,16 @@ def canRandoLoc(location) -> bool:
 
 class Location:
     '''
+        ANTIQUATED (This is hopefully going to be handled
+        by the player object in conjunction with a basic
+        requirementList passed to every location object.
+        That list is going to be made up of playerFlags
+        that will match exactly with the self.playerFlags
+        for easy lookup i.e. The basic requirement list
+        can look like [hasMorphJump, canFreeze, 11, redDoors]
+        and the logic will check if each req is a flag or an item.
+        If flag, will check samus.playerFlags[] to see if the requirement
+        is met. If number, will check if number in samus.itemList[]):
         Nested item requirements are optional
         i.e. To get to any sector, you need either
         SpeedBooster or MorphBall, so to express
@@ -253,26 +263,6 @@ class Location:
     def __str__(self):
         return "S" + str(self.sector) + "-" + str(self.X) + "-" + str(self.Y)
 
-
-'''    compoundRequirementsKey = (anyMissile,
-                               anyBomb,
-                               anySector,
-                               canFreeze,
-                               morphJump,
-                               blueDoors,
-                               greenDoors,
-                               yellowDoors,
-                               redDoors)
-    anyMissile = [1, 7, 8, 15]
-    anyBomb = [3, 10]
-    anySector = [0, 5]
-    canFreeze = [8, 17]
-    morphJump = [3, 4]
-    blueDoors = [anySector]
-    greenDoors = [anySector, 5, anyBomb, morphJump]
-    yellowDoors = [anySector, 5, anyBomb]
-    redDoors = [anySector, 13, 5, anyBomb]
-'''
 class Player:
 
     def __init__(self):
