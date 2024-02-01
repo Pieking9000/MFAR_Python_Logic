@@ -5,38 +5,30 @@ def main():
     global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations, blueDoors, greenDoors, yellowDoors, redDoors, anySector, anyMissile, S1, S2, locDict
     global samus
     global locationsDict
-    itemIndex = {
-        0:"MorphBall",
-        1:"Missile",
-        2:"ChargeBeam",
-        3:"Bombs",
-        4:"HighJump",
-        5:"SpeedBooster",
-        6:"Varia",
-        7:"SuperMissile",
-        8:"IceMissle",
-        9:"WideBeam",
-        10:"PowerBomb",
-        11:"SpaceJump",
-        12:"PlasmaBeam",
-        13:"Gravity",
-        14:"WaveBeam",
-        15:"DiffusionMissile",
-        16:"ScrewAttack",
-        17:"IceBeam",
-        18:"AnyMissile",
-        23:"EnergyTank",
-        24:"MissileTank",
-        25:"PowerBombTank",
-        26:"AnyBomb",
-        99:"Undefined"
-        }
     allLocations = []
     samus = Player()
     
-    startingItems = [Item.Morph,Item.Missile,Item.SpeedBooster,Item.SuperMissile,Item.IceMissile,Item.DiffusionMissile]
-    remainingItems = [Item.ChargeBeam,Item.Bombs,Item.HighJump,Item.Varia,Item.WideBeam,Item.PowerBomb,Item.SpaceJump,Item.PlasmaBeam,Item.Gravity,Item.WaveBeam,Item.ScrewAttack,Item.IceBeam]
-    playerItems = []
+    startingItems = [
+        Item.Morph,
+        Item.Missile,
+        Item.SpeedBooster,
+        Item.SuperMissile,
+        Item.IceMissile,
+        Item.DiffusionMissile]
+    
+    remainingItems = [
+        Item.ChargeBeam,
+        Item.Bombs,
+        Item.HighJump,
+        Item.Varia,
+        Item.WideBeam,
+        Item.PowerBomb,
+        Item.SpaceJump,
+        Item.PlasmaBeam,
+        Item.Gravity,
+        Item.WaveBeam,
+        Item.ScrewAttack,
+        Item.IceBeam]
 
     remainingLocations = []
     spoilerLogLocations = []
@@ -45,15 +37,14 @@ def main():
 
 
 def getItemOrder():
-    global samus, allLocations, startingItems, remainingItems, itemIndex
-    processedLocations = []
+    global samus, allLocations, startingItems, remainingItems, spoilerLogLocations
     startingItem = startingItems[random.randint(0, len(startingItems) - 1)]
     samus.addItem(startingItem)
     refreshLocations()
     startingItems.remove(startingItem)
 
-    processedLocations.append(Location(0, 15, 1, True))
-    processedLocations[0].set_item(startingItem)
+    spoilerLogLocations.append(Location(0, 15, 1, True))
+    spoilerLogLocations[0].set_item(startingItem)
     
     remainingItems.extend(startingItems)
     print("Starting Item: " + startingItem.name)
@@ -71,10 +62,10 @@ def getItemOrder():
         remainingItems.remove(itemToPlace)
         remainingLocations.remove(locToRando)
         samus.addItem(itemToPlace)
-        processedLocations.append(locToRando)
+        spoilerLogLocations.append(locToRando)
         refreshLocations()
         
-    for i in processedLocations:
+    for i in spoilerLogLocations:
         print(str(i) + ": " + str(i.get_item().name))
         
 
