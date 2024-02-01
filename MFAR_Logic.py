@@ -2,7 +2,7 @@ import random
 from enum import Enum
 
 def main():
-    global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations, blueDoors, greenDoors, yellowDoors, redDoors, anySector, anyMissile, S1, S2, locDict
+    global startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations
     global samus
     global locationsDict
     allLocations = []
