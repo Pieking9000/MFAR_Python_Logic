@@ -1,324 +1,96 @@
 import random
+from enum import Enum
 
 def main():
-<<<<<<< Updated upstream
-    global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations
-=======
-    global itemIndex, startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations, blueDoors, greenDoors, yellowDoors, redDoors, anySector, anyMissile, S1, S2, locDict
+    global startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allLocations
     global samus
     global locationsDict
->>>>>>> Stashed changes
-    itemIndex = {
-        0:"MorphBall",
-        1:"Missile",
-        2:"ChargeBeam",
-        3:"Bombs",
-        4:"HighJump",
-        5:"SpeedBooster",
-        6:"Varia",
-        7:"SuperMissile",
-        8:"IceMissle",
-        9:"WideBeam",
-        10:"PowerBomb",
-        11:"SpaceJump",
-        12:"PlasmaBeam",
-        13:"Gravity",
-        14:"WaveBeam",
-        15:"DiffusionMissile",
-        16:"ScrewAttack",
-        17:"IceBeam",
-        18:"AnyMissile",
-        23:"EnergyTank",
-        24:"MissileTank",
-        25:"PowerBombTank",
-        26:"AnyBomb",
-        99:"Undefined"
-        }
-<<<<<<< Updated upstream
-    #Requirement Baselines
-    blueDoors = [[0, 5]]
-    greenDoors = [[0, 5], 5, [3, 10], [3, 4]]
-    yellowDoors = [[0, 5], 5, [3, 10]]
-    redDoors = [[0, 5], 13, 5, [3, 10]]
-    anySector = [[0, 5]]
-    S1 = [anySector, [[1, 7, 8, 15], 5]]
-    S2 = [anySector, [3, 10]]
-    anyMissile = [1, 7, 8, 15]
-=======
     allLocations = []
     samus = Player()
->>>>>>> Stashed changes
     
-    startingItems = [0,1,5,7,8,15]
-    remainingItems = [2,3,4,6,9,10,11,12,13,14,16,17]
-    playerItems = []
-<<<<<<< Updated upstream
-    allLocations = [
-        #MainDeck
-        Location(0, 9, 4, [[14, [5, 11, [17, 8]]], greenDoors]),
-        Location(0, 24, 6, [[1, 7, 8, 15]]),
-        Location(0, 25, 6, [[1, 7, 8, 15]]),
-        Location(0, 14, 7, [greenDoors, 0, [3, 10]]),
-        Location(0, 19, 7, [[1, 7, 8, 15]]),
-        Location(0, 20, 7, [[1, 7, 8, 15]]),
-        Location(0, 5, 8, [[0, 5], 5]),
-        Location(0, 24, 8, [[1, 7, 8, 15]]),
-        Location(0, 12, 9, [0]),
-        Location(0, 8, 11, [10, [3, 4]]),
-        Location(0, 14, 11, [10]),
-        Location(0, 21, 16, [[redDoors, 10], 0]),
-        Location(0, 22, 18, [[redDoors, 10], 0]),
-        Location(0, 21, 21, [[redDoors, 10], 0]),
-        Location(0, 5, 22, [redDoors, 14, 5]),
-        #Sector 1
-        Location(1, 7, 0, [anySector, greenDoors, 11]),
-        Location(1, 13, 2, [S1, 0]),
-        Location(1, 17, 2, [S1, 0]),
-        Location(1, 5, 3, [S1, [11, 5]]),
-        Location(1, 6, 3, [S1]),
-        Location(1, 7, 4, [S1, 0]),
-        Location(1, 9, 4, [S1, 0, 5]),
-        Location(1, 10, 4, [S1, anyMissile]),
-        Location(1, 9, 6, [S1, anyMissile]),
-        Location(1, 12, 7, [S1, 5, 13]),
-        Location(1, 13, 8, [S1]),
-        Location(1, 1, 9, [S1, 16, 14, anyMissile]),
-        Location(1, 4, 10, [S1, 16, 15]),
-        Location(1, 8, 11, [S1, 16, 10]),
-        #Sector 2
-        Location(2, 5, 0, [anySector, 11, 16]),
-        Location(2, 5, 1, [anySector, 11, 16]),
-        Location(2, 4, 3, [anySector, [4, 5, 16, [8, 17]]]),
-        Location(2, 9, 3, [S2, 0]),
-        Location(2, 1, 4, [anySector]),
-        Location(2, 4, 4, [S2, 0]),
-        Location(2, 12, 4, [S2, 0]),
-        Location(2, 0, 5, [S2, anyMissile]),
-        Location(2, 9, 5, [S2, 0]),
-        Location(2, 13, 6, [])
-        ]
-    remainingLocations = []
-    spoilerLogLocations = []
-    #test()
-    #randomizeMainDeck()
-    #printSpoilerLog()
-    print(getItemOrder())
-=======
+    startingItems = [
+        Item.Morph,
+        Item.Missile,
+        Item.SpeedBooster,
+        Item.SuperMissile,
+        Item.IceMissile,
+        Item.DiffusionMissile]
+    
+    remainingItems = [
+        Item.ChargeBeam,
+        Item.Bombs,
+        Item.HighJump,
+        Item.Varia,
+        Item.WideBeam,
+        Item.PowerBomb,
+        Item.SpaceJump,
+        Item.PlasmaBeam,
+        Item.Gravity,
+        Item.WaveBeam,
+        Item.ScrewAttack,
+        Item.IceBeam]
 
     remainingLocations = []
     spoilerLogLocations = []
     getItemOrder()
     #test()
->>>>>>> Stashed changes
 
 
 def getItemOrder():
-    global samus, allLocations, startingItems, remainingItems, itemIndex
-    processedLocations = []
+    global samus, allLocations, startingItems, remainingItems, spoilerLogLocations
     startingItem = startingItems[random.randint(0, len(startingItems) - 1)]
-<<<<<<< Updated upstream
-    startingItemLocation = Location(0, 15, 1, [], startingItem)
-    startingItemLocation.set_item(startingItem)
-    spoilerLogLocations.append(startingItemLocation)
-    
-    for item in startingItems:
-        remainingItems.append(item)
-        
-    playerItems.append(startingItem)
-    remainingItems.remove(startingItem)
-
-    
-    #print(itemIndex[startingItem])
-    while len(remainingItems) > 0:
-        location = allLocations[random.randint(0, len(allLocations) - 1)]
-        if canRandoLoc(location):
-            tempItem = remainingItems[random.randint(0, len(remainingItems) - 1)]
-            playerItems.append(tempItem)
-            remainingLocations.extend(getAvailableLocations(tempItem))
-            location.set_item(tempItem)
-            spoilerLogLocations.append(location)
-            remainingItems.remove(tempItem)            
-            allLocations.remove(location)
-
-
-def canRandoLoc(location) -> bool:
-    global playerItems
-    requirementList = location.itemRequirements
-    playerItemsList = playerItems
-    canPlayerGetHere = True
-    while len(requirementList) > 0:
-        for item in playerItemsList:
-            for req in requirementList:
-                if type(req) is list:
-                    for elem in req:
-                        if item == elem:
-                            requirementList.remove(req)
-                else:
-                    if item == req:
-                        requirementList.remove(req)
-        if len(playerItemsList) == 0:
-            canPlayerGetHere = False
-            break
-        else:
-            print(len(playerItemsList))
-            playerItemsList.remove(item)
-    return canPlayerGetHere
-                    
-
-def printSpoilerLog():
-    global spoilerLogLocations, itemIndex
-    for i in range(0, len(spoilerLogLocations) - 1):
-        loc = spoilerLogLocations[i]
-        print("Item: " + itemIndex[loc.get_item()] + " at S" + str(loc.sector) + "-" + str(loc.X) + "-" + str(loc.Y))
-
-def getAvailableLocations(newItem) -> list:
-    global allLocations
-    availableLocations = []
-    for loc in allLocations:
-        for req in loc.itemRequirements:
-            if type(req) is list:
-                for elem in req:
-                    if newItem == elem:
-                        availableLocations.append(loc)
-            else:
-                if newItem == req:
-                    availableLocations.append(loc)
-    return availableLocations
-
-def getItemOrder() -> list:
-    global startingItems, remainingItems
-    listOfItems = []
-    startingItem = startingItems[random.randint(0, len(startingItems) - 1)]
-    listOfItems.append(startingItem)
-=======
     samus.addItem(startingItem)
     refreshLocations()
->>>>>>> Stashed changes
     startingItems.remove(startingItem)
 
-    processedLocations.append(Location(0, 15, 1, True))
-    processedLocations[0].set_item(startingItem)
+    spoilerLogLocations.append(Location(0, 15, 1, True, dataRoom = True))
+    spoilerLogLocations[0].set_item(startingItem)
     
     remainingItems.extend(startingItems)
-    print(remainingItems)
-    print("Starting Item: " + itemIndex[startingItem])
+    #print("Starting Item: " + startingItem.name)
     refreshLocations()
-    print(len(getReachableLocations()))
     
     while len(remainingItems) > 0:
-<<<<<<< Updated upstream
-        nextItem = remainingItems[random.randint(0, len(remainingItems) - 1)]
-        listOfItems.append(nextItem)
-        remainingItems.remove(nextItem)
-    return listOfItems
-
-def test():
-    global playerItems
-    playerItems = [7, 20]
-    testLoc = Location(0, 24, 8, [[1, 7, 8, 15], 0])
-    print(canRandoLoc(testLoc))
-
-class Location:
-    '''
-        Nested item requirements are optional
-        i.e. To get to any sector, you need either
-        SpeedBooster or MorphBall, so to express
-        that in the itemRequirements field, your final
-        list of itemRequirements would be [[0,5]].
-        [] is your total list, and [0,5] (Speed Booster
-        or Morph ball), is your only requirement
-        Another example, to get to the item at coord (13, 5)
-        (The Hornoad Hole? I think?) your item requirements would
-        look like this: [[0,5], [5, [1, 7, 8, 15]], 0].
-        To reach this item, you only need 3 items, your first
-        is either morph ball or speed booster to get to the sector
-        elevator, the second is either Speed booster or any missile
-        to get past the missile barrier before the first atmo room
-        (and the atmo room itself), and the third item is morph ball
-        and only morph ball
-    '''
-=======
-        remainingLocations = getReachableLocations()
-        if(len(remainingLocations) == 0):
+        reachableLocations = getReachableLocations()
+        hasAllLeaveRequirements = True
+        if(len(reachableLocations) == 0):
             break
-        locToRando = remainingLocations[random.randint(0, len(remainingLocations) - 1)]
+        locToRando = reachableLocations[random.randint(0, len(reachableLocations) - 1)]
         itemToPlace = remainingItems[random.randint(0, len(remainingItems) - 1)]
 
+        while locToRando in spoilerLogLocations:
+            locToRando = reachableLocations[random.randint(0, len(reachableLocations) - 1)]
+
+        if locToRando.bossAtLocation is not None:
+            hasAllLeaveRequirements = False
+            if len(locToRando.bossAtLocation.value.itemToLeave) > 0:
+                for i in locToRando.bossAtLocation.value.itemToLeave:
+                    if i not in samus.itemList:
+                        hasAllLeaveRequirements = False
+                        break
+                    else:
+                        hasAllLeaveRequirements = True
+            else:
+                hasAllLeaveRequirements = True
+
+
+        if hasAllLeaveRequirements == False:
+            break
+            
         locToRando.set_item(itemToPlace)
         remainingItems.remove(itemToPlace)
-        remainingLocations.remove(locToRando)
         samus.addItem(itemToPlace)
-        processedLocations.append(locToRando)
+        spoilerLogLocations.append(locToRando)
         refreshLocations()
         
-    for i in processedLocations:
-        print(str(i) + ": " + str(itemIndex[i.get_item()]))
+    for i in spoilerLogLocations:
+        if(i.bossAtLocation is not None):
+            print(str(i.bossAtLocation.name) + ": " + (str(i.get_item().name)))
+        elif i.dataRoom:
+            print("Data S" + str(i.sector) + ": " + str(i.get_item().name))
+        else:
+            print(str(i) + ": " + str(i.get_item().name))
         
-    
-    
-
-def test():
-    global samus, allLocations
-    print("Base Flags: " + str(samus.playerFlags))
-    samus.addItem(3)
-    samus.addItem(10)
-    refreshLocations()
-    print("Both Bombs Flags: " + str(samus.playerFlags))
-    samus.removeItem(3)
-    refreshLocations()
-    print("Just PB Flags: " + str(samus.playerFlags))
-    samus.removeItem(10)
-    refreshLocations()
-    print("Should Be Base Flags: " + str(samus.playerFlags))
-
-def refreshLocations():
-    global allLocations, samus, S1, S2
-    S1 = (samus.playerFlags["canEnterSectors"] and (samus.playerFlags["hasMissile"] or (5 in samus.itemList)))
-    S2 = (samus.playerFlags["canEnterSectors"] and samus.playerFlags["hasBomb"])
-    
-    allLocations = [
-        #MainDeck
-        #Location(0, 15, 1, True),
-        Location(0, 9, 4, (((14 in samus.itemList) or (5 in samus.itemList and 11 in samus.itemList and samus.playerFlags["canFreeze"])) and samus.doorKey["greenDoors"])),
-        Location(0, 24, 6, samus.playerFlags["hasMissile"]),
-        Location(0, 25, 6, samus.playerFlags["hasMissile"]),
-        Location(0, 14, 7, (samus.doorKey["greenDoors"] and (0 in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(0, 19, 7, samus.playerFlags["hasMissile"]),
-        Location(0, 20, 7, samus.playerFlags["hasMissile"]),
-        Location(0, 5, 8, (samus.playerFlags["canEnterSectors"] and (5 in samus.itemList))),
-        Location(0, 24, 8, samus.playerFlags["hasMissile"]),
-        Location(0, 12, 9, (0 in samus.itemList)),
-        Location(0, 8, 11, ((10 in samus.itemList) and samus.playerFlags["canMorphJump"])),
-        Location(0, 14, 11, (10 in samus.itemList)),
-        Location(0, 21, 16, ((samus.doorKey["redDoors"] or (10 in samus.itemList)) and (0 in samus.itemList))),
-        Location(0, 21, 21, ((samus.doorKey["redDoors"] or (10 in samus.itemList)) and (0 in samus.itemList))),
-        Location(0, 21, 21, ((samus.doorKey["redDoors"] or (10 in samus.itemList)) and (0 in samus.itemList))),
-        Location(0, 5, 22, (samus.doorKey["redDoors"] and (14 in samus.itemList) and (5 in samus.itemList))),
-        #Sector 1,
-        Location(1, 7, 0, (samus.playerFlags["canEnterSectors"] and samus.doorKey["greenDoors"] and (11 in samus.itemList))),
-        Location(1, 13, 2, (S1 and (0 in samus.itemList))),
-        Location(1, 17, 2, (S1 and (0 in samus.itemList))),
-        Location(1, 5, 3, (S1 and ((11 in samus.itemList) or (5 in samus.itemList)))),
-        Location(1, 6, 3, S1),
-        Location(1, 7, 4, (S1 and (0 in samus.itemList))),
-        Location(1, 9, 4, (S1 and (0 in samus.itemList) and (5 in samus.itemList))),
-        Location(1, 10, 4, (S1 and samus.playerFlags["hasMissile"])),
-        Location(1, 9, 6, (S1 and samus.playerFlags["hasMissile"])),
-        Location(1, 12, 7, (S1 and (5 in samus.itemList) and (13 in samus.itemList))),
-        Location(1, 13, 8, S1),
-        Location(1, 1, 9, (S1 and (16 in samus.itemList) and (14 in samus.itemList) and samus.playerFlags["hasMissile"])),
-        Location(1, 4, 10, (S1 and (16 in samus.itemList) and (15 in samus.itemList))),
-        Location(1, 8, 11, (S1 and (16 in samus.itemList) and (10 in samus.itemList))),
-        #Sector 2
-        Location(2, 5, 0, (samus.playerFlags["canEnterSectors"] and (11 in samus.itemList) and (16 in samus.itemList))),
-        Location(2, 5, 1, (samus.playerFlags["canEnterSectors"] and (11 in samus.itemList) and (16 in samus.itemList))),
-        Location(2, 4, 3, (samus.playerFlags["canEnterSectors"] and ((4 in samus.itemList) or (5 in samus.itemList) or (16 in samus.itemList) or samus.playerFlags["canFreeze"]))),
-        Location(2, 9, 3, (S2 and (0 in samus.itemList))),
-        Location(2, 1, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["blueDoors"])),
-        Location(2, 4, 4, (S2 and (0 in samus.itemList))),
-        Location(2, 12, 4, (S2 and (0 in samus.itemList))),
-        Location(2, 0, 5, (S2 and samus.playerFlags["hasMissile"])),
-        Location(2, 9, 5, (S2 and (0 in samus.itemList)))]
 
 def getReachableLocations() -> list:
     global samus, allLocations
@@ -327,16 +99,120 @@ def getReachableLocations() -> list:
         if loc.itemRequirements == True:
             returnList.append(loc)
     return returnList
+        
+def test():
+    global samus, allLocations
+    print(len(Bosses.WideCoreX.value.itemToLeave))
+
+
+def refreshLocations():
+    global allLocations, samus, S1, S2
+    S1 = (samus.playerFlags["canEnterSectors"] and (samus.playerFlags["hasMissile"] or (Item.SpeedBooster in samus.itemList)))
+    S2 = (samus.playerFlags["canEnterSectors"] and samus.playerFlags["hasBomb"])
+    S3 = (samus.playerFlags["canEnterSectors"])
+    #This definition of S4 accounts for the players exit of S4 but not sure if I want to include this
+    #since nothing will be in S4 unless you can already leave, including items that allow you
+    #to leave. For example, one way to leave S4 is with speed booster and lowering the water level
+    #With this definition, Speedbooster will never be in S4. Essentially, this trades seed spiciness for
+    #less softlocks
+    #S4 = (samus.playerFlags["canEnterSectors"] and samus.playerFlags["hasBomb"] and ((samus.doorKey["blueDoors"] and (Item.SpeedBooster in samus.itemList)) or ((Item.SpaceJump in samus.itemList) or ((Item.HighJump in samus.itemList) and samus.playerFlags["canFreeze"])))))
+    S4 = (samus.playerFlags["canEnterSectors"] and samus.playerFlags["hasBomb"])
+    
+    allLocations = [
+        #MainDeck
+        #Location(0, 15, 1, True),
+        Location(0, 9, 4, (((Item.WaveBeam in samus.itemList) or (Item.SpeedBooster in samus.itemList and Item.SpaceJump in samus.itemList and samus.playerFlags["canFreeze"])) and samus.doorKey["greenDoors"])),
+        Location(0, 24, 6, (samus.playerFlags["hasMissile"] and ((Item.Morph in samus.itemList) or (Item.ScrewAttack in samus.itemList)))),
+        Location(0, 25, 6, (samus.playerFlags["hasMissile"] and ((Item.Morph in samus.itemList) or (Item.ScrewAttack in samus.itemList)))),
+        Location(0, 14, 7, (samus.doorKey["greenDoors"] and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
+        Location(0, 19, 7, samus.playerFlags["hasMissile"]),
+        Location(0, 20, 7, samus.playerFlags["hasMissile"]),
+        Location(0, 5, 8, (samus.playerFlags["canEnterSectors"] and (Item.SpeedBooster in samus.itemList))),
+        Location(0, 24, 8, samus.playerFlags["hasMissile"]),
+        Location(0, 12, 9, (Item.Morph in samus.itemList)),
+        Location(0, 8, 11, ((Item.PowerBomb in samus.itemList) and samus.playerFlags["canMorphJump"])),
+        Location(0, 14, 11, (Item.PowerBomb in samus.itemList)),
+        Location(0, 21, 16, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList))),
+        Location(0, 21, 21, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList)), Bosses.Yakuza),
+        Location(0, 5, 22, (samus.doorKey["redDoors"] and (Item.WaveBeam in samus.itemList) and (Item.SpeedBooster in samus.itemList))),
+        #Sector 1,
+        Location(1, 7, 0, (samus.playerFlags["canEnterSectors"] and samus.doorKey["greenDoors"] and (Item.SpaceJump in samus.itemList))),
+        Location(1, 13, 2, (S1 and (Item.Morph in samus.itemList))),
+        Location(1, 17, 2, (S1 and (Item.Morph in samus.itemList))),
+        Location(1, 5, 3, (S1 and ((Item.SpaceJump in samus.itemList) or (Item.SpeedBooster in samus.itemList)))),
+        Location(1, 6, 3, S1),
+        Location(1, 7, 4, (S1 and (Item.Morph in samus.itemList))),
+        Location(1, 9, 4, (S1 and (Item.Morph in samus.itemList) and (Item.SpeedBooster in samus.itemList))),
+        Location(1, 10, 4, (S1 and samus.playerFlags["hasMissile"])),
+        Location(1, 9, 6, (S1 and samus.playerFlags["hasMissile"])),
+        Location(1, 12, 7, (S1 and (Item.SpeedBooster in samus.itemList) and (Item.Gravity in samus.itemList))),
+        Location(1, 13, 8, S1),
+        Location(1, 1, 9, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.WaveBeam in samus.itemList) and samus.playerFlags["hasMissile"])),
+        Location(1, 4, 10, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.DiffusionMissile in samus.itemList))),
+        Location(1, 8, 11, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.PowerBomb in samus.itemList))),
+        #Sector 2
+        Location(2, 5, 0, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList))),
+        Location(2, 5, 1, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList))),
+        Location(2, 4, 3, (samus.playerFlags["canEnterSectors"] and ((Item.HighJump in samus.itemList) or (Item.SpeedBooster in samus.itemList) or (Item.ScrewAttack in samus.itemList) or samus.playerFlags["canFreeze"]))),
+        Location(2, 9, 3, (S2 and (Item.Morph in samus.itemList) and samus.doorKey["blueDoors"])),
+        Location(2, 1, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["blueDoors"]), dataRoom = True),
+        Location(2, 4, 4, (S2 and (Item.Morph in samus.itemList))),
+        Location(2, 12, 4, (((Item.PowerBomb in samus.itemList) and samus.playerFlags["canEnterSectors"]) or (S2 and Item.SpaceJump))),
+        Location(2, 0, 5, (S2 and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
+        Location(2, 9, 5, (S2 and (Item.Morph in samus.itemList))),
+        Location(2, 13, 6, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.PowerBomb in samus.itemList) or (Item.SpaceJump in samus.itemList) or (Item.ScrewAttack in samus.itemList)) and samus.playerFlags["hasBomb"] and samus.playerFlags["hasMissile"]), Bosses.Nettori),
+        Location(2, 5, 8, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList))),
+        Location(2, 8, 8, (S2 and (Item.SpaceJump in samus.itemList))),
+        Location(2, 5, 10, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList))),
+        Location(2, 4, 11, (S2 and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))),
+        Location(2, 12, 11, (S2 and (Item.Morph in samus.itemList))),
+        Location(2, 3, 12, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["canMorphJump"])),
+        Location(2, 16, 12, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"])),
+        Location(2, 14, 13, (S2 and samus.playerFlags["hasMissile"]), Bosses.Zazabi),
+        Location(2, 3, 14, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
+        Location(2, 16, 14, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"])),
+        #Sector3
+        Location(3, 15, 0, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
+        Location(3, 10, 1, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"])) and (Item.PowerBomb in samus.itemList))),
+        Location(3, 1, 2, (S3 and (Item.SpeedBooster in samus.itemList) and samus.playerFlags["hasBomb"] and (samus.playerFlags["hasBomb"] or (Item.WaveBeam in samus.itemList)))),
+        Location(3, 11, 2, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or samus.playerFlags["hasBomb"]))))),
+        Location(3, 18, 3, (S3 and samus.doorKey["greenDoors"]), dataRoom = True),
+        Location(3, 20, 3, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
+        Location(3, 3, 4, (S3 and (Item.Varia in samus.itemList))),
+        Location(3, 11, 4, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.Morph in samus.itemList) and (samus.playerFlags["hasBomb"] or (Item.ScrewAttack in samus.itemList)))),
+        Location(3, 17, 4, (S3 and (samus.doorKey["greenDoors"]))),
+        Location(3, 0, 5, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"])),
+        Location(3, 6, 6, (S3 and (Item.SpeedBooster in samus.itemList))),
+        Location(3, 11, 6, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList))),
+        Location(3, 3, 8, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["canFreeze"]), bossAtLocation = Bosses.WideCoreX),
+        Location(3, 18, 9, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
+        Location(3, 20, 9, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
+        Location(3, 14, 10, (S3 and samus.doorKey["greenDoors"])),
+        Location(3, 17, 10, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
+        Location(3, 7, 11, (S3 and samus.doorKey["greenDoors"] and (Item.PowerBomb in samus.itemList))),
+        #Sector4
+        Location(4, 10, 0, (S4 and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
+        Location(4, 13, 1, (S4  and samus.playerFlags["canMorphJump"] and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
+        Location(4, 9, 2, (S4)),
+        Location(4, 14, 2, (S4  and samus.playerFlags["canMorphJump"] and (Item.Morph in samus.itemList))),
+        Location(4, 5, 3, (S4 and (Item.Morph in samus.itemList))),
+        Location(4, 0, 6, (S4 and samus.doorKey["blueDoors"] and ((Item.SpeedBooster in samus.itemList) or (Item.Gravity in samus.itemList)))),
+        Location(4, 9, 6, (S4 and (Item.SpeedBooster in samus.itemList) and (samus.doorKey["blueDoors"] or (Item.Gravity in samus.itemList)))),
+        Location(4, 12, 6, (samus.playerFlags["canEnterSectors"] and (Item.PowerBomb in samus.itemList))),
+        Location(4, 15, 6, (samus.playerFlags["canEnterSectors"] and ((Item.SuperMissile in samus.itemList) or (Item.WaveBeam in samus.itemList) or ((Item.Gravity in samus.itemList) and (Item.ScrewAttack in samus.itemList))))),
+        Location(4, 18, 7, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.DiffusionMissile in samus.itemList) or ((Item.WaveBeam in samus.itemList) and (Item.IceBeam in samus.itemList)))))
+        ]
 
 class Location:
     
->>>>>>> Stashed changes
-    def __init__(self, sector, X, Y, itemRequirements, itemAtLocation = None):
+    def __init__(self, sector, X, Y, itemRequirements, bossAtLocation = None, dataRoom = False, itemAtLocation = None):
         self.sector = sector
         self.X = X
         self.Y = Y
         self.itemRequirements = itemRequirements
         self.itemAtLocation = itemAtLocation
+        self.bossAtLocation = bossAtLocation
+        self.dataRoom = dataRoom
 
     def get_item(self):
         return self.itemAtLocation
@@ -350,19 +226,24 @@ class Location:
     def __str__(self):
         return "S" + str(self.sector) + "-" + str(self.X) + "-" + str(self.Y)
 
-<<<<<<< Updated upstream
-=======
+    def __eq__(self, toCompare):
+        if self.sector == toCompare.sector and self.X == toCompare.X and self.Y == toCompare.Y:
+            return True
+        else:
+            return False
+
 class Player:
 
     def __init__(self):
         self.itemList = []
         self.health = 99
+        self.missileDamage = 0
         self.flagKey = {
-            "hasMissile":[1, 7, 8, 15],
-            "hasBomb":[3, 10],
-            "canFreeze":[8, 17],
-            "canMorphJump":[3, 4],
-            "canEnterSectors":[0, 5]}
+            "hasMissile":[Item.Missile, Item.SuperMissile, Item.IceMissile, Item.DiffusionMissile],
+            "hasBomb":[Item.Bombs, Item.PowerBomb],
+            "canFreeze":[Item.IceMissile, Item.IceBeam],
+            "canMorphJump":[Item.Bombs, Item.HighJump],
+            "canEnterSectors":[Item.Morph, Item.SpeedBooster]}
         
         self.playerFlags = {
             #player can have any item in flagKey entry to be True
@@ -374,9 +255,9 @@ class Player:
         
         self.doorKey = {
             "blueDoors":self.playerFlags["canEnterSectors"],
-            "greenDoors": self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
-            "yellowDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"],
-            "redDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and 13 in self.itemList and (self.playerFlags["hasBomb"] or 16 in self.itemList)}
+            "greenDoors": self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
+            "yellowDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and (Item.Varia in self.itemList),
+            "redDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and (Item.Gravity in self.itemList) and (self.playerFlags["hasBomb"] or (Item.ScrewAttack in self.itemList))}
         
     def setHasMissiles(self, value):
         self.playerFlags["hasMissile"] = value
@@ -393,18 +274,6 @@ class Player:
     def setCanEnterSectors(self, value):
         self.playerFlags["canEnterSectors"] = value
 
-    def setBlueDoors(self, value):
-        self.playerFlags["blueDoors"] = value
-
-    def setGreenDoors(self, value):
-        self.playerFlags["greenDoors"] = value
-
-    def setYellowDoors(self, value):
-        self.playerFlags["yellowDoors"] = value
-
-    def setRedDoors(self, value):
-        self.playerFlags["redDoors"] = value
-
     def addItem(self, item):
         self.itemList.append(item)
         for entry in self.playerFlags:
@@ -413,19 +282,19 @@ class Player:
 
         self.doorKey = {
             "blueDoors":self.playerFlags["canEnterSectors"],
-            "greenDoors": self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
-            "yellowDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"],
-            "redDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and 13 in self.itemList and self.playerFlags["hasBomb"]}
+            "greenDoors": self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
+            "yellowDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and (Item.Varia in self.itemList),
+            "redDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and (Item.Gravity in self.itemList) and (self.playerFlags["hasBomb"] or (Item.ScrewAttack in self.itemList))}
         
     def removeItem(self, item):
         self.itemList.remove(item)
         
         self.doorKey = {
             "blueDoors":self.playerFlags["canEnterSectors"],
-            "greenDoors": self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
-            "yellowDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and self.playerFlags["hasBomb"],
-            "redDoors":self.playerFlags["canEnterSectors"] and 5 in self.itemList and 13 in self.itemList and self.playerFlags["hasBomb"]}
-
+            "greenDoors": self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and self.playerFlags["canMorphJump"],
+            "yellowDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and self.playerFlags["hasBomb"] and (Item.Varia in self.itemList),
+            "redDoors":self.playerFlags["canEnterSectors"] and (Item.SpeedBooster in self.itemList) and (Item.Gravity in self.itemList) and (self.playerFlags["hasBomb"] or (Item.ScrewAttack in self.itemList))}
+     
         for entry in self.playerFlags:
             if item in self.flagKey[entry]:
                 if self.playerFlags[entry] == True:
@@ -445,7 +314,71 @@ class Player:
 
     def getHealth(self):
         return str(self.health)
->>>>>>> Stashed changes
+
+class Rando():
+    
+    def __init__(self, majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle):
+        self.majMinItemSplit = majMinItemSplit
+        self.missileUpgradesEnableMissiles = missileUpdatesEnableMissiles
+        self.bombsEnablePB = bombsEnablePB
+        self.damageRuns = damageRuns
+        self.splitSecurityLevels = splitSecurityLevels
+        self.sectorShuffle = sectorShuffle
+
+class Boss():
+    #Health is self explanitory
+    #itemToLeave as in, the item(s) required to leave the bosses location
+    #(i.e. SpaceJump is hard required to leave Yakuza's arena)
+    def __init__(self, health, itemToLeave):
+        self.health = health
+        self.itemToLeave = itemToLeave
+
+class Item(Enum):
+    Morph = 0
+    Missile = 1
+    ChargeBeam = 2
+    Bombs = 3
+    HighJump = 4
+    SpeedBooster = 5
+    Varia = 6
+    SuperMissile = 7
+    IceMissile = 8
+    WideBeam = 9
+    PowerBomb = 10
+    SpaceJump = 11
+    PlasmaBeam = 12
+    Gravity = 13
+    WaveBeam = 14
+    DiffusionMissile = 15
+    ScrewAttack = 16
+    IceBeam = 17
+    ETank = 18
+    MissileTank = 19
+    PowerBombTank = 20
+    
+class Bosses(Enum):
+    '''
+    BoxOne is ommitted because you don't actually expose its CoreX until XBox
+    MegaCore and WideCore have 0 health because, even though they do have health
+    requirements, there are none to consider as far as the rando is concerned because
+    the rando will only check to make sure the player has enough missiles before requiring
+    a boss. I could probably add samus.playerFlags["hasMissile"] in there as a requirment so
+    your first missile requirement isn't on either of those bosses but ¯\_(ツ)_/¯ I'm sure
+    it'll be fine
+    '''
+    Arachnus = Boss(150, [Item.Morph])
+    ChargeCoreX = Boss(33, [])
+    Zazabi = Boss(100, [Item.HighJump, Item.SpaceJump])
+    Serris = Boss(50, [Item.SpeedBooster])
+    MegaCoreX = Boss(0, [])
+    WideCoreX = Boss(0, [])
+    Yakuza = Boss(1000, [Item.SpaceJump])
+    Nettori = Boss(2000, [])
+    Nightmare = Boss(1200, [Item.SpeedBooster, Item.Gravity])
+    BoxTwo = Boss(500, [Item.WaveBeam, Item.ScrewAttack])
+    Ridley = Boss(4500, [Item.SpaceJump])
+    
+
 
 if __name__ == "__main__":
     main()
