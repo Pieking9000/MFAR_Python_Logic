@@ -125,11 +125,11 @@ def printSpoilerLog():
     
     for i in spoilerLogLocations:
         if(i.bossAtLocation is not None):
-            print(str(i.bossAtLocation.name) + ": " + (str(i.get_item().name)))
+            print(str(i.bossAtLocation.name) + ": " + str(i.itemAtLocation.name))
         elif i.dataRoom:
-            print("Data S" + str(i.sector) + ": " + str(i.get_item().name))
+            print("Data S" + str(i.sector) + ": " + str(i.itemAtLocation.name))
         else:
-            print(str(i) + ": " + str(i.get_item().name))
+            print(str(i) + ": " + str(i.itemAtLocation.name))
         
 
 def getReachableLocations() -> list:
@@ -331,14 +331,8 @@ class Location:
         self.bossAtLocation = bossAtLocation
         self.dataRoom = dataRoom
 
-    def get_item(self):
-        return self.itemAtLocation
-
     def set_item(self, newItem):
         self.itemAtLocation = newItem
-
-    def set_access(self, access):
-        self.playerAccessible = access
 
     def __str__(self):
         return "S" + str(self.sector) + "-" + str(self.X) + "-" + str(self.Y)
