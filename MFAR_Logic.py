@@ -5,10 +5,11 @@ def main():
     global startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allSectors, missileFirstPath
     global samus
     global locationsDict
+    global randomizer
     allSectors = []
     missileFirstPath = []
     samus = Player()
-    
+    randomizer = Rando(False, True, True, True, True, True, True)
     startingItems = [
         Item.Morph,
         Item.Missile,
@@ -121,7 +122,7 @@ def getItemOrder():
 
 
 def printSpoilerLog():
-    global spoilerLogLocations
+    global spoilerLogLocations, randomizer
     
     for i in spoilerLogLocations:
         if(i.bossAtLocation is not None):
@@ -129,7 +130,11 @@ def printSpoilerLog():
         elif i.dataRoom:
             print("Data S" + str(i.sector) + ": " + str(i.itemAtLocation.name))
         else:
-            print(str(i) + ": " + str(i.itemAtLocation.name))
+            if randomizer.showCommNames == True:
+                print("S" + str(i.sector) + "-" + i.commName + ": " + str(i.itemAtLocation.name))
+            else:
+                print(str(i) + ": " + str(i.itemAtLocation.name))
+            
         
 
 def getReachableLocations() -> list:
@@ -154,7 +159,7 @@ def refreshLocations():
     S1 = (samus.playerFlags["canEnterSectors"] and (samus.playerFlags["hasMissile"] or (Item.SpeedBooster in samus.itemList)))
     S2 = (samus.playerFlags["canEnterSectors"] and samus.playerFlags["hasBomb"])
     S3 = (samus.playerFlags["canEnterSectors"])
-    #This definition of S4 accounts for the players exit of S4 but not sure if I want to include this
+    #This definition of S4 accounts for the players ability to exit S4 but not sure if I want to include this
     #since nothing will be in S4 unless you can already leave, including items that allow you
     #to leave. For example, one way to leave S4 is with speed booster and lowering the water level
     #With this definition, Speedbooster will never be in S4. Essentially, this trades seed spiciness for
@@ -172,138 +177,139 @@ def refreshLocations():
     S6 = (samus.playerFlags["canEnterSectors"] and (Item.Varia in samus.itemList) and ((Item.SpeedBooster in samus.itemList) or (Item.SuperMissile in samus.itemList) or (Item.PowerBomb in samus.itemList) or (Item.ScrewAttack in samus.itemList)))
 
     missileFirstPath = [
-        Location(0, 24, 6, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
-        Location(0, 25, 6, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
-        Location(0, 19, 7, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
-        Location(0, 20, 7, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
+        Location(0, 24, 6, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "Arachnus E-Tank"),
+        Location(0, 25, 6, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "The Attic"),
+        Location(0, 19, 7, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "Second Missiles"),
+        Location(0, 20, 7, (samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "First Missiles"),
         Location(0, 24, 8, samus.playerFlags["hasMissile"], bossAtLocation = Bosses.Arachnus),
         ]
     
-    mainDeckLocations = [Location(0, 9, 4, (((Item.WaveBeam in samus.itemList) or (Item.SpeedBooster in samus.itemList and Item.SpaceJump in samus.itemList and samus.playerFlags["canFreeze"])) and samus.doorKey["greenDoors"])),
-        Location(0, 14, 7, (samus.doorKey["greenDoors"] and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(0, 5, 8, (samus.playerFlags["canEnterSectors"] and (Item.SpeedBooster in samus.itemList))),
-        Location(0, 12, 9, (Item.Morph in samus.itemList)),
-        Location(0, 8, 11, ((Item.PowerBomb in samus.itemList) and samus.playerFlags["canMorphJump"])),
-        Location(0, 14, 11, (Item.PowerBomb in samus.itemList)),
-        Location(0, 21, 16, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList))),
+    mainDeckLocations = [Location(0, 9, 4, (((Item.WaveBeam in samus.itemList) or (Item.SpeedBooster in samus.itemList and Item.SpaceJump in samus.itemList and samus.playerFlags["canFreeze"])) and samus.doorKey["greenDoors"]), commName = "Animals"),
+        Location(0, 14, 7, (samus.doorKey["greenDoors"] and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Behind PB Geron"),
+        Location(0, 5, 8, (samus.playerFlags["canEnterSectors"] and (Item.SpeedBooster in samus.itemList)), commName = "Main Elevator"),
+        Location(0, 12, 9, (Item.Morph in samus.itemList), commName = "Cubby Hole"),
+        Location(0, 8, 11, ((Item.PowerBomb in samus.itemList) and samus.playerFlags["canMorphJump"]), commName = "Maintenance Tunnel"),
+        Location(0, 14, 11, (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList), commName = "Spitter Hallway East"),
+        Location(0, 21, 16, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList)), commName = "Reactor E-Tank"),
+        Location(0, 22, 18, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList)), commName = "Reactor Missiles"),
         Location(0, 21, 21, ((samus.doorKey["redDoors"] or (Item.PowerBomb in samus.itemList)) and (Item.Morph in samus.itemList)), Bosses.Yakuza),
-        Location(0, 5, 22, (samus.doorKey["redDoors"] and (Item.WaveBeam in samus.itemList) and (Item.SpeedBooster in samus.itemList)))
+        Location(0, 5, 22, (samus.doorKey["redDoors"] and (Item.WaveBeam in samus.itemList) and (Item.SpeedBooster in samus.itemList)), commName = "In Space")
         ]
 
-    S1Locations = [Location(1, 7, 0, (samus.playerFlags["canEnterSectors"] and samus.doorKey["greenDoors"] and (Item.SpaceJump in samus.itemList))),
-        Location(1, 13, 2, (S1 and (Item.Morph in samus.itemList))),
-        Location(1, 17, 2, (S1 and (Item.Morph in samus.itemList))),
-        Location(1, 5, 3, (S1 and ((Item.SpaceJump in samus.itemList) or (Item.SpeedBooster in samus.itemList)))),
-        Location(1, 6, 3, S1),
-        Location(1, 7, 4, (S1 and (Item.Morph in samus.itemList))),
-        Location(1, 9, 4, (S1 and (Item.Morph in samus.itemList) and (Item.SpeedBooster in samus.itemList))),
-        Location(1, 10, 4, (S1 and samus.playerFlags["hasMissile"])),
-        Location(1, 9, 6, (S1 and samus.playerFlags["hasMissile"])),
-        Location(1, 12, 7, (S1 and (Item.SpeedBooster in samus.itemList) and (Item.Gravity in samus.itemList))),
-        Location(1, 13, 8, S1),
-        Location(1, 1, 9, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.WaveBeam in samus.itemList) and samus.playerFlags["hasMissile"])),
-        Location(1, 4, 10, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.DiffusionMissile in samus.itemList))),
-        Location(1, 8, 11, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.PowerBomb in samus.itemList)))
+    S1Locations = [Location(1, 7, 0, (samus.playerFlags["canEnterSectors"] and samus.doorKey["greenDoors"] and (Item.SpaceJump in samus.itemList)), commName = "Antechamber"),
+        Location(1, 13, 2, (S1 and (Item.Morph in samus.itemList)), commName = "Hornoad Hole"),
+        Location(1, 17, 2, (S1 and (Item.Morph in samus.itemList)), commName = "Baby's First Wall Jump"),
+        Location(1, 5, 3, (S1 and ((Item.SpaceJump in samus.itemList) or (Item.SpeedBooster in samus.itemList))), commName = "Lava Dive (Far)"),
+        Location(1, 6, 3, S1, commName="Lava Dive (Near)"),
+        Location(1, 7, 4, (S1 and (Item.Morph in samus.itemList)), commName = "Lava Dive (Bottom)"),
+        Location(1, 9, 4, (S1 and (Item.Morph in samus.itemList) and (Item.SpeedBooster in samus.itemList)), commName = "Above Charge Core"),
+        Location(1, 10, 4, (S1 and samus.playerFlags["hasMissile"]), commName = "Crab Rave"),
+        Location(1, 9, 6, (S1 and samus.playerFlags["hasMissile"]), bossAtLocation = Bosses.ChargeCoreX),
+        Location(1, 12, 7, (S1 and (Item.SpeedBooster in samus.itemList) and (Item.Gravity in samus.itemList)), commName = "Watering Hole"),
+        Location(1, 13, 8, S1, commName = "Crab Guardian"),
+        Location(1, 1, 9, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.WaveBeam in samus.itemList) and samus.playerFlags["hasMissile"]), bossAtLocation = Bosses.Ridley),
+        Location(1, 3, 10, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.DiffusionMissile in samus.itemList)), commName = "Tourian Ripper Maze"),
+        Location(1, 8, 11, (S1 and (Item.ScrewAttack in samus.itemList) and (Item.PowerBomb in samus.itemList)), commName = "Animorphs")
         ]
 
-    S2Locations = [Location(2, 5, 0, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList))),
-        Location(2, 5, 1, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList))),
-        Location(2, 4, 3, (samus.playerFlags["canEnterSectors"] and ((Item.HighJump in samus.itemList) or (Item.SpeedBooster in samus.itemList) or (Item.ScrewAttack in samus.itemList) or samus.playerFlags["canFreeze"]))),
-        Location(2, 9, 3, (S2 and (Item.Morph in samus.itemList) and samus.doorKey["blueDoors"])),
+    S2Locations = [Location(2, 5, 0, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList)), commName = "Crumble City (Top)"),
+        Location(2, 5, 1, (samus.playerFlags["canEnterSectors"] and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList)), commName = "Crumble City (Bottom)"),
+        Location(2, 4, 3, (samus.playerFlags["canEnterSectors"] and ((Item.HighJump in samus.itemList) or (Item.SpeedBooster in samus.itemList) or (Item.ScrewAttack in samus.itemList) or samus.playerFlags["canFreeze"])), commName = "Kago Jump"),
+        Location(2, 9, 3, (S2 and (Item.Morph in samus.itemList) and samus.doorKey["blueDoors"]), commName = "Blue Locked Missiles"),
         Location(2, 1, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["blueDoors"]), dataRoom = True),
-        Location(2, 4, 4, (S2 and (Item.Morph in samus.itemList))),
-        Location(2, 12, 4, (((Item.PowerBomb in samus.itemList) and samus.playerFlags["canEnterSectors"]) or (S2 and Item.SpaceJump))),
-        Location(2, 0, 5, (S2 and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
-        Location(2, 9, 5, (S2 and (Item.Morph in samus.itemList))),
+        Location(2, 4, 4, (S2 and (Item.Morph in samus.itemList)), commName = "Before Data Room"),
+        Location(2, 12, 4, (((Item.PowerBomb in samus.itemList) and samus.playerFlags["canEnterSectors"]) or (S2 and Item.SpaceJump)), commName = "Above Nettori"),
+        Location(2, 0, 5, (S2 and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "Below Data Room"),
+        Location(2, 9, 5, (S2 and (Item.Morph in samus.itemList)), commName = "Zazabi Tower Exist"),
         Location(2, 13, 6, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.PowerBomb in samus.itemList) or (Item.SpaceJump in samus.itemList) or (Item.ScrewAttack in samus.itemList)) and samus.playerFlags["hasBomb"] and samus.playerFlags["hasMissile"]), Bosses.Nettori),
-        Location(2, 5, 8, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList))),
-        Location(2, 8, 8, (S2 and (Item.SpaceJump in samus.itemList))),
-        Location(2, 5, 10, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList))),
-        Location(2, 4, 11, (S2 and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))),
-        Location(2, 12, 11, (S2 and (Item.Morph in samus.itemList))),
-        Location(2, 3, 12, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["canMorphJump"])),
-        Location(2, 16, 12, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"])),
+        Location(2, 5, 8, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList)), commName = "Ripper Tower (Top)"),
+        Location(2, 8, 8, (S2 and (Item.SpaceJump in samus.itemList)), commName = "Puyo Palace"),
+        Location(2, 5, 10, (S2 and samus.playerFlags["canFreeze"] and (Item.Morph in samus.itemList)), commName = "Ripper Tower (Bottom)"),
+        Location(2, 4, 11, (S2 and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))), commName = "Oasis"),
+        Location(2, 12, 11, (S2 and (Item.Morph in samus.itemList)), commName = "Zazabi E-Tank"),
+        Location(2, 3, 12, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["canMorphJump"]), commName = "Wonderwall"),
+        Location(2, 16, 12, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.SpaceJump in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"]), commName = "Zazabi Speedway (Top)"),
         Location(2, 14, 13, (S2 and samus.playerFlags["hasMissile"]), Bosses.Zazabi),
-        Location(2, 3, 14, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(2, 16, 14, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"]))
+        Location(2, 2, 14, (S2 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Blue Zorro Room"),
+        Location(2, 16, 14, (S2 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasMissile"]), commName = "Zazabi Speedway (Bottom)")
         ]
 
-    S3Locations = [Location(3, 15, 0, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
-        Location(3, 10, 1, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"])) and (Item.PowerBomb in samus.itemList))),
-        Location(3, 1, 2, (S3 and (Item.SpeedBooster in samus.itemList) and samus.playerFlags["hasBomb"] and (samus.playerFlags["hasBomb"] or (Item.WaveBeam in samus.itemList)))),
-        Location(3, 11, 2, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or samus.playerFlags["hasBomb"]))))),
+    S3Locations = [Location(3, 15, 0, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))))), commName = "Top of Sector 3"),
+        Location(3, 10, 1, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"])) and (Item.PowerBomb in samus.itemList)), commName = "Upper 3 PB-locked"),
+        Location(3, 1, 2, (S3 and (Item.SpeedBooster in samus.itemList) and samus.playerFlags["hasBomb"] and (samus.playerFlags["hasBomb"] or (Item.WaveBeam in samus.itemList))), commName = "Speed Locked E"),
+        Location(3, 11, 2, (S3 and (samus.doorKey["greenDoors"] or ((Item.ScrewAttack in samus.itemList) and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or samus.playerFlags["hasBomb"])))), commName = "Upper 3 E-Tank"),
         Location(3, 18, 3, (S3 and samus.doorKey["greenDoors"]), dataRoom = True),
-        Location(3, 20, 3, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
-        Location(3, 3, 4, (S3 and (Item.Varia in samus.itemList))),
-        Location(3, 11, 4, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.Morph in samus.itemList) and (samus.playerFlags["hasBomb"] or (Item.ScrewAttack in samus.itemList)))),
-        Location(3, 17, 4, (S3 and (samus.doorKey["greenDoors"]))),
-        Location(3, 0, 5, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(3, 6, 6, (S3 and (Item.SpeedBooster in samus.itemList))),
-        Location(3, 11, 6, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList))),
+        Location(3, 20, 3, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))))), commName = "Garbage Chute (Upper)"),
+        Location(3, 3, 4, (S3 and (Item.Varia in samus.itemList)), commName = "First H*ck Run"),
+        Location(3, 11, 4, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.Morph in samus.itemList) and (samus.playerFlags["hasBomb"] or (Item.ScrewAttack in samus.itemList))), commName = "BOB"),
+        Location(3, 17, 4, (S3 and (samus.doorKey["greenDoors"])), commName = "Under Box"),
+        Location(3, 0, 5, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Porch"),
+        Location(3, 6, 6, (S3 and (Item.SpeedBooster in samus.itemList)), commName = "Telltale Heart"),
+        Location(3, 11, 6, (S3 and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList)), commName = "PB Stretchy"),
         Location(3, 3, 8, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["canFreeze"]), bossAtLocation = Bosses.WideCoreX),
-        Location(3, 18, 9, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
-        Location(3, 20, 9, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
-        Location(3, 14, 10, (S3 and samus.doorKey["greenDoors"])),
-        Location(3, 17, 10, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)))))),
-        Location(3, 7, 11, (S3 and samus.doorKey["greenDoors"] and (Item.PowerBomb in samus.itemList)))
+        Location(3, 18, 9, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))))), commName = "Nova Stairs (Far)"),
+        Location(3, 20, 9, (S3 and samus.doorKey["greenDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))))), commName = "Garbage Chute (Lower)"),
+        Location(3, 14, 10, (S3 and samus.doorKey["greenDoors"]), commName = "Owtch Cushions"),
+        Location(3, 17, 10, (S3 and samus.doorKey["greenDoors"] and samus.playerFlags["hasBomb"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)) and ((Item.WaveBeam in samus.itemList) or (samus.playerFlags["canFreeze"] and ((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList))))), commName = "Nova Stairs (Near)"),
+        Location(3, 7, 11, (S3 and samus.doorKey["greenDoors"] and (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList)), commName = "Lava Maze")
         ]
 
     S4Locations = [Location(4, 10, 0, (S4 and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), bossAtLocation = Bosses.Serris),
-        Location(4, 13, 1, (S4  and samus.playerFlags["canMorphJump"] and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList))),
-        Location(4, 9, 2, (S4)),
-        Location(4, 14, 2, (S4  and samus.playerFlags["canMorphJump"] and (Item.Morph in samus.itemList))),
-        Location(4, 5, 3, (S4 and (Item.Morph in samus.itemList))),
-        Location(4, 0, 6, (S4 and samus.doorKey["blueDoors"] and ((Item.SpeedBooster in samus.itemList) or (Item.Gravity in samus.itemList)))),
-        Location(4, 9, 6, (S4 and (Item.SpeedBooster in samus.itemList) and (samus.doorKey["blueDoors"] or (Item.Gravity in samus.itemList)))),
-        Location(4, 12, 6, (samus.playerFlags["canEnterSectors"] and (Item.PowerBomb in samus.itemList))),
-        Location(4, 15, 6, (samus.playerFlags["canEnterSectors"] and ((Item.SuperMissile in samus.itemList) or (Item.WaveBeam in samus.itemList) or ((Item.Gravity in samus.itemList) and (Item.ScrewAttack in samus.itemList))))),
+        Location(4, 13, 1, (S4  and samus.playerFlags["canMorphJump"] and samus.playerFlags["hasMissile"] and (Item.Morph in samus.itemList)), commName = "Serris Escape (Upper)"),
+        Location(4, 9, 2, (S4), commName = "Broken Bridge"),
+        Location(4, 14, 2, (S4  and samus.playerFlags["canMorphJump"] and (Item.Morph in samus.itemList)), commName = "Serris Escape (Lower)"),
+        Location(4, 5, 3, (S4 and (Item.Morph in samus.itemList)), commName = "Owtch Room"),
+        Location(4, 0, 6, (S4 and samus.doorKey["blueDoors"] and ((Item.SpeedBooster in samus.itemList) or (Item.Gravity in samus.itemList))), commName = "Pumpcon Trol"),
+        Location(4, 9, 6, (S4 and (Item.SpeedBooster in samus.itemList) and (samus.doorKey["blueDoors"] or (Item.Gravity in samus.itemList))), commName = "Waterway"),
+        Location(4, 12, 6, (samus.playerFlags["canEnterSectors"] and (Item.PowerBomb in samus.itemList)), commName = "PB Locked"),
+        Location(4, 15, 6, (samus.playerFlags["canEnterSectors"] and ((Item.SuperMissile in samus.itemList) or (Item.WaveBeam in samus.itemList) or ((Item.Gravity in samus.itemList) and (Item.ScrewAttack in samus.itemList)))), commName = "Drain Pipe"),
         Location(4, 19, 6, (LS4 and samus.doorKey["redDoors"]), dataRoom = True),
-        Location(4, 18, 7, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.DiffusionMissile in samus.itemList) or ((Item.WaveBeam in samus.itemList) and (Item.IceBeam in samus.itemList))))),
-        Location(4, 19, 7, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.DiffusionMissile in samus.itemList) or ((Item.WaveBeam in samus.itemList) and (Item.IceBeam in samus.itemList))) and (((Item.Gravity in samus.itemList) and (Item.ScrewAttack in samus.itemList)) or LS4))),
-        Location(4, 7, 8, (LS4 and (Item.Morph in samus.itemList))),
-        Location(4, 11, 8, (LS4)),
-        Location(4, 7, 10, (LS4 and (Item.Morph in samus.itemList) and samus.playerFlags["hasMissile"] and (samus.playerFlags["hasBomb"] or (Item.ScrewAttack in samus.itemList)))),
-        Location(4, 10, 12, (LS4 and (Item.PowerBomb in samus.itemList))),
-        Location(4, 6, 14, (LS4 and (Item.Morph in samus.itemList) and ((Item.PowerBomb in samus.itemList) or (Item.WaveBeam in samus.itemList)) and samus.playerFlags["hasMissile"]))
+        Location(4, 18, 7, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.DiffusionMissile in samus.itemList) or ((Item.WaveBeam in samus.itemList) and (Item.IceBeam in samus.itemList)))), commName = "Upper-Lower 4"),
+        Location(4, 19, 7, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.DiffusionMissile in samus.itemList) or ((Item.WaveBeam in samus.itemList) and (Item.IceBeam in samus.itemList))) and (((Item.Gravity in samus.itemList) and (Item.ScrewAttack in samus.itemList)) or LS4)), commName = "Behind the Kago"),
+        Location(4, 7, 8, (LS4 and (Item.Morph in samus.itemList)), commName = "Lower 4 Screw Blocks"),
+        Location(4, 11, 8, (LS4), commName = "Worst Room in the Game"),
+        Location(4, 7, 10, (LS4 and (Item.Morph in samus.itemList) and samus.playerFlags["hasMissile"] and (samus.playerFlags["hasBomb"] or (Item.ScrewAttack in samus.itemList))), commName = "Cheddar Bay"),
+        Location(4, 10, 12, (LS4 and (Item.PowerBomb in samus.itemList)), commName = "The Thunderdome"),
+        Location(4, 6, 14, (LS4 and (Item.Morph in samus.itemList) and ((Item.PowerBomb in samus.itemList) or (Item.WaveBeam in samus.itemList)) and samus.playerFlags["hasMissile"]), commName = "Crab Battle")
         ]
 
-    S5Locations = [Location(5, 4, 1, (BS5 and (Item.SpeedBooster in samus.itemList))),
-        Location(5, 5, 1, (samus.playerFlags["canEnterSectors"] and (((Item.Morph in samus.itemList) and samus.playerFlags["hasMissile"]) or samus.doorKey["yellowDoors"]))),
-        Location(5, 11, 1, (BS5 and samus.playerFlags["hasBomb"] and (Item.Morph in samus.itemList))),
-        Location(5, 3, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["yellowDoors"])),
-        Location(5, 5, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["yellowDoors"] and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(5, 18, 4, (BS5 and (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList))),
+    S5Locations = [Location(5, 4, 1, (BS5 and (Item.SpeedBooster in samus.itemList)), commName = "Speed Trap (Rear)"),
+        Location(5, 5, 1, (samus.playerFlags["canEnterSectors"] and (((Item.Morph in samus.itemList) and samus.playerFlags["hasMissile"]) or samus.doorKey["yellowDoors"])), commName = "Speed Trap (Front)"),
+        Location(5, 11, 1, (BS5 and samus.playerFlags["hasBomb"] and (Item.Morph in samus.itemList)), commName = "Crow's Nest"),
+        Location(5, 3, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["yellowDoors"]), commName = "Magic Box"),
+        Location(5, 5, 4, (samus.playerFlags["canEnterSectors"] and samus.doorKey["yellowDoors"] and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Mama Gerubus"),
+        Location(5, 18, 4, (BS5 and (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList)), commName = "Nightmare Recharge"),
         #Edge case, not technically a boss item however to reach this item, players will have to fight
         #Nightmare. Need a way of taking into account player damage output before randoing this location
         #Maybe set bossAtLocation to Nightmare and then just hardcode "If bossAtLocation = True and Location = S5-22-4,
         # in spoiler log, just output location like normal?" Idk, a problem for the future
-        Location(5, 22, 4, (BS5 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
-        Location(5, 6, 5, (S5 and (Item.Morph in samus.itemList) and samus.playerFlags["canFreeze"])),
+        Location(5, 22, 4, (BS5 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Above Nightmare"),
+        Location(5, 6, 5, (S5 and (Item.Morph in samus.itemList) and samus.playerFlags["canFreeze"]), commName = "Ripper Road"),
         Location(5, 12, 5, (S5 and samus.doorKey["yellowDoors"]), dataRoom = True),
-        Location(5, 17, 5, (BS5 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"])),
+        Location(5, 17, 5, (BS5 and (Item.Morph in samus.itemList) and samus.playerFlags["hasBomb"]), commName = "Break Room"),
         Location(5, 22, 6, (BS5), bossAtLocation = Bosses.Nightmare),
-        Location(5, 8, 7, (S5 and (Item.PowerBomb in samus.itemList) and ((Item.SpaceJump in samus.itemList) or samus.playerFlags["canFreeze"]))),
-        Location(5, 12, 7, (S5 and samus.doorKey["yellowDoors"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList)))),
-        Location(5, 15, 7, (BS5 and (Item.Varia in samus.itemList) and samus.playerFlags["hasMissile"] and samus.playerFlags["canMorphJump"] and (Item.Morph in samus.itemList))),
-        Location(5, 20, 7, (BS5 and (Item.SpeedBooster in samus.itemList) and (Item.Gravity in samus.itemList))),
-        Location(5, 14, 8, (S5 and (Item.Morph in samus.itemList) and ((Item.SpaceJump in samus.itemList) or samus.playerFlags["canFreeze"]) and samus.doorKey["yellowDoors"])),
-        Location(5, 7, 11, (S5 and (Item.PowerBomb in samus.itemList)))
+        Location(5, 8, 7, (S5 and (Item.PowerBomb in samus.itemList) and ((Item.SpaceJump in samus.itemList) or samus.playerFlags["canFreeze"])), commName = "Above Yellow Locks"),
+        Location(5, 12, 7, (S5 and samus.doorKey["yellowDoors"] and (samus.playerFlags["canFreeze"] or (Item.SpaceJump in samus.itemList))), commName = "Fake E-Tank"),
+        Location(5, 15, 7, (BS5 and (Item.Varia in samus.itemList) and samus.playerFlags["hasMissile"] and samus.playerFlags["canMorphJump"] and (Item.Morph in samus.itemList)), commName = "Mini Fridge"),
+        Location(5, 20, 7, (BS5 and (Item.SpeedBooster in samus.itemList) and (Item.Gravity in samus.itemList)), commName = "Airlock"),
+        Location(5, 14, 8, (S5 and (Item.Morph in samus.itemList) and ((Item.SpaceJump in samus.itemList) or samus.playerFlags["canFreeze"]) and samus.doorKey["yellowDoors"]), commName = "200 Missile"),
+        Location(5, 7, 11, (S5 and (Item.PowerBomb in samus.itemList)), commName = "Bottom of Lower 5")
         ]
 
-    S6Locations = [Location(6, 5, 3, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.SpeedBooster in samus.itemList) or samus.playerFlags["hasBomb"]))),
-        Location(6, 8, 3, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.SuperMissile in samus.itemList) or (Item.SpeedBooster in samus.itemList) or (Item.ScrewAttack in samus.itemList)) and samus.playerFlags["hasBomb"])),
-        Location(6, 14, 3, (S6 and samus.playerFlags["hasBomb"] and (Item.Morph in samus.itemList))),
-        Location(6, 3, 4, (S6 and samus.doorKey["redDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.SpeedBooster in samus.itemList))),
-        Location(6, 14, 4, (S6 and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and (Item.Bombs in samus.itemList))),
-        Location(6, 9, 5, (S6 and samus.doorKey["redDoors"] and (Item.Morph in samus.itemList) and (Item.PowerBomb in samus.itemList))),
-        Location(6, 1, 6, (S6 and samus.doorKey["redDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.SpaceJump in samus.itemList))),
+    S6Locations = [Location(6, 5, 3, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.SpeedBooster in samus.itemList) or samus.playerFlags["hasBomb"])), commName = "Sector 6 First Item"),
+        Location(6, 8, 3, (samus.playerFlags["canEnterSectors"] and (Item.Morph in samus.itemList) and ((Item.SuperMissile in samus.itemList) or (Item.SpeedBooster in samus.itemList) or (Item.ScrewAttack in samus.itemList)) and samus.playerFlags["hasBomb"]), commName = "Mission Impossible"),
+        Location(6, 14, 3, (S6 and samus.playerFlags["hasBomb"] and (Item.Morph in samus.itemList)), commName = "Fake Missile Tank"),
+        Location(6, 3, 4, (S6 and samus.doorKey["redDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.SpeedBooster in samus.itemList)), commName = "Space Boost Alley (Upper)"),
+        Location(6, 14, 4, (S6 and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and (Item.Bombs in samus.itemList)), commName = "Pillar Highway"),
+        Location(6, 9, 5, (S6 and samus.doorKey["redDoors"] and (Item.Morph in samus.itemList) and (Item.PowerBomb in samus.itemList)), commName = "Run Crumbler"),
+        Location(6, 1, 6, (S6 and samus.doorKey["redDoors"] and (Item.ScrewAttack in samus.itemList) and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.SpaceJump in samus.itemList)), commName = "Space Boost Alley (Lower)"),
         Location(6, 7, 6, (S6 and samus.doorKey["redDoors"] and (Item.PowerBomb in samus.itemList)), bossAtLocation = Bosses.BoxTwo),
-        Location(6, 10, 6, (S6 and samus.doorKey["redDoors"] and (Item.PowerBomb in samus.itemList) and (Item.WaveBeam in samus.itemList))),
-        Location(6, 6, 8, (S6 and (Item.SpeedBooster in samus.itemList))),
-        Location(6, 12, 8, (S6 and (((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"]) or ((Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.doorKey["greenDoors"])))),
-        Location(6, 11, 9, (S6 and (Item.Morph in samus.itemList) and (((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"]) or ((Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.doorKey["greenDoors"])) and (((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) or samus.playerFlags["canFreeze"]))),
-        Location(6, 5, 11, (S6 and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList) and (((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) or samus.playerFlags["canFreeze"]))),
-        Location(6, 11, 11, (S6 and (Item.SpeedBooster in samus.itemList) and (Item.ChargeBeam in samus.itemList) and (Item.Morph in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.playerFlags["hasMissile"] and samus.doorKey["greenDoors"]))
+        Location(6, 10, 6, (S6 and samus.doorKey["redDoors"] and (Item.PowerBomb in samus.itemList) and (Item.WaveBeam in samus.itemList)), commName = "XBOX Garage"),
+        Location(6, 6, 8, (S6 and (Item.SpeedBooster in samus.itemList)), commName = "Free E-Tank"),
+        Location(6, 12, 8, (S6 and (((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"]) or ((Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.doorKey["greenDoors"]))), commName = "Pantry"),
+        Location(6, 11, 9, (S6 and (Item.Morph in samus.itemList) and (((Item.ScrewAttack in samus.itemList) and samus.playerFlags["hasBomb"]) or ((Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.doorKey["greenDoors"])) and (((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) or samus.playerFlags["canFreeze"])), commName = "Higher Jump Hole"),
+        Location(6, 5, 11, (S6 and (Item.SpeedBooster in samus.itemList) and (Item.PowerBomb in samus.itemList) and (Item.Morph in samus.itemList) and (((Item.HighJump in samus.itemList) or (Item.SpaceJump in samus.itemList)) or samus.playerFlags["canFreeze"])), commName = "Wine Cellar"),
+        Location(6, 11, 11, (S6 and (Item.SpeedBooster in samus.itemList) and (Item.ChargeBeam in samus.itemList) and (Item.Morph in samus.itemList) and (Item.PowerBomb in samus.itemList) and samus.playerFlags["hasMissile"] and samus.doorKey["greenDoors"]), bossAtLocation = Bosses.ChargeCoreX)
         ]
 
     allSectors = [
@@ -322,7 +328,7 @@ def refreshLocations():
 
 class Location:
     
-    def __init__(self, sector, X, Y, itemRequirements, bossAtLocation = None, dataRoom = False, itemAtLocation = None):
+    def __init__(self, sector, X, Y, itemRequirements, bossAtLocation = None, dataRoom = False, itemAtLocation = None, commName = ""):
         self.sector = sector
         self.X = X
         self.Y = Y
@@ -330,6 +336,7 @@ class Location:
         self.itemAtLocation = itemAtLocation
         self.bossAtLocation = bossAtLocation
         self.dataRoom = dataRoom
+        self.commName = commName
 
     def set_item(self, newItem):
         self.itemAtLocation = newItem
@@ -407,13 +414,14 @@ class Player:
 
 class Rando():
     
-    def __init__(self, majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle):
+    def __init__(self, majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle, showCommNames):
         self.majMinItemSplit = majMinItemSplit
-        self.missileUpgradesEnableMissiles = missileUpdatesEnableMissiles
+        self.missileUpgradesEnableMissiles = missileUpgradesEnableMissiles
         self.bombsEnablePB = bombsEnablePB
         self.damageRuns = damageRuns
         self.splitSecurityLevels = splitSecurityLevels
         self.sectorShuffle = sectorShuffle
+        self.showCommNames = showCommNames
 
 class Boss():
     #Health is self explanitory
