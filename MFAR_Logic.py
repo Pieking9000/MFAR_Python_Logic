@@ -1,15 +1,13 @@
-import random
+import random, json
 from enum import Enum
 
 def main():
-    global startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, allSectors, missileFirstPath
+    global startingItems, playerItems, remainingLocations, remainingItems, spoilerLogLocations, tankLocations, allSectors, missileFirstPath, extraItemLocations
     global samus
-    global locationsDict
     global randomizer
     allSectors = []
     missileFirstPath = []
     samus = Player()
-    randomizer = Rando(False, True, True, True, True, True, True)
     startingItems = [
         Item.Morph,
         Item.Missile,
@@ -32,10 +30,14 @@ def main():
         Item.ScrewAttack,
         Item.IceBeam]
 
+    tankLocations = []
+
     remainingLocations = []
     spoilerLogLocations = []
     getItemOrder()
-    printSpoilerLog()
+    placeTanks()
+    #printSpoilerLog()
+    writeSpoilerLog()
     #test()
 
 
@@ -120,6 +122,40 @@ def getItemOrder():
             refreshLocations()
             #print("Trying again")
 
+def placeTanks():
+    global allSectors, tankLocations, spoilerLogLocations
+
+    tankableLocations = []
+    ETanks = 0 #20
+    Missiles = 0 #48
+    PB = 0 #32
+
+    for i in allSectors:
+        for j in i.itemLocations:
+            if j not in spoilerLogLocations:
+                tankableLocations.append(j)
+
+    while ETanks < 20 and Missiles < 48 and PB < 32:
+        locToRando = tankableLocations[random.randint(0, len(tankableLocations) - 1)]
+        whatToPlace = random.randint(0, 2)
+        if whatToPlace == 0 and ETanks < 20:
+            locToRando.set_item(Item.ETank)
+            tankLocations.append(locToRando)
+            tankableLocations.remove(locToRando)
+            ETanks = ETanks + 1
+        elif whatToPlace == 1 and Missiles < 48:
+            locToRando.set_item(Item.MissileTank)
+            tankLocations.append(locToRando)
+            tankableLocations.remove(locToRando)
+            Missiles = Missiles + 1
+        elif whatToPlace == 2 and PB < 32:
+            locToRando.set_item(Item.PowerBombTank)
+            tankLocations.append(locToRando)
+            tankableLocations.remove(locToRando)
+            PB = PB + 1
+            
+    
+
 
 def printSpoilerLog():
     global spoilerLogLocations, randomizer
@@ -135,7 +171,56 @@ def printSpoilerLog():
             else:
                 print(str(i) + ": " + str(i.itemAtLocation.name))
             
+
+def writeSpoilerLog():
+    global spoilerLogLocations, randomizer, extraItemLocations, tankLocations
+    mainItems = {}
+    tanks = {}
+    settings = {
+        "Difficulty": randomizer.difficulty,
+        "Major/Minor Item Split": randomizer.majMinItemSplit,
+        "Missile Upgrades Enable Missiles": randomizer.missileUpgradesEnableMissiles,
+        "Use Power Bombs Without Bombs": randomizer.bombsEnablePB,
+        "Damage Runs": randomizer.damageRuns,
+        "Split Security Levels": randomizer.splitSecurityLevels,
+        "Sector Shuffle": randomizer.sectorShuffle,
+        "Show Community Names": randomizer.showCommNames        
+        }
+    
+    for i in spoilerLogLocations:
+        if(i.bossAtLocation is not None):
+            mainItems[str(i.bossAtLocation.name)] = str(i.itemAtLocation.name)
+        elif i.dataRoom:
+            mainItems["Data S" + str(i.sector)] = str(i.itemAtLocation.name)
+        else:
+            if randomizer.showCommNames == True:
+                mainItems["S" + str(i.sector) + "-" + i.commName] = str(i.itemAtLocation.name)
+            else:
+                mainItems[str(i)] = str(i.itemAtLocation.name)
+
+    for i in tankLocations:
+        if(i.bossAtLocation is not None):
+            tanks[str(i.bossAtLocation.name)] = str(i.itemAtLocation.name)
+        elif i.dataRoom:
+            tanks["Data S" + str(i.sector)] = str(i.itemAtLocation.name)
+        else:
+            if randomizer.showCommNames == True:
+                tanks["S" + str(i.sector) + "-" + i.commName] = str(i.itemAtLocation.name)
+            else:
+                tanks[str(i)] = str(i.itemAtLocation.name)
         
+    finalLog = {
+        "Settings": settings,
+        "Main Items": mainItems,
+        "Tank Locations": tanks
+        }
+    
+    json_object = json.dumps(finalLog, indent=4)
+
+    with open("testLog.json", "w") as outfile:
+        outfile.write(json_object)
+    
+ 
 
 def getReachableLocations() -> list:
     global samus, allSectors
@@ -324,7 +409,10 @@ def refreshLocations():
     ]
           
 
-          
+def initRando(majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle, showCommNames, difficulty):
+    global randomizer
+    randomizer = Rando(majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle, showCommNames, difficulty)
+    main()
 
 class Location:
     
@@ -414,7 +502,7 @@ class Player:
 
 class Rando():
     
-    def __init__(self, majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle, showCommNames):
+    def __init__(self, majMinItemSplit, missileUpgradesEnableMissiles, bombsEnablePB, damageRuns, splitSecurityLevels, sectorShuffle, showCommNames, difficulty):
         self.majMinItemSplit = majMinItemSplit
         self.missileUpgradesEnableMissiles = missileUpgradesEnableMissiles
         self.bombsEnablePB = bombsEnablePB
@@ -422,6 +510,7 @@ class Rando():
         self.splitSecurityLevels = splitSecurityLevels
         self.sectorShuffle = sectorShuffle
         self.showCommNames = showCommNames
+        self.difficulty = difficulty
 
 class Boss():
     #Health is self explanitory
